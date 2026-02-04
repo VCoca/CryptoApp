@@ -1,0 +1,14 @@
+C:\Users\Korisnik\source\repos\Crypto\CryptoApp\CryptoApp\bin\Debug\net9.0\CryptoApp.exe
+C:\Users\Korisnik\source\repos\Crypto\CryptoApp\CryptoApp\bin\Debug\net9.0\CryptoApp.deps.json
+C:\Users\Korisnik\source\repos\Crypto\CryptoApp\CryptoApp\bin\Debug\net9.0\CryptoApp.runtimeconfig.json
+C:\Users\Korisnik\source\repos\Crypto\CryptoApp\CryptoApp\bin\Debug\net9.0\CryptoApp.dll
+C:\Users\Korisnik\source\repos\Crypto\CryptoApp\CryptoApp\bin\Debug\net9.0\CryptoApp.pdb
+C:\Users\Korisnik\source\repos\Crypto\CryptoApp\CryptoApp\obj\Debug\net9.0\CryptoApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Korisnik\source\repos\Crypto\CryptoApp\CryptoApp\obj\Debug\net9.0\CryptoApp.AssemblyInfoInputs.cache
+C:\Users\Korisnik\source\repos\Crypto\CryptoApp\CryptoApp\obj\Debug\net9.0\CryptoApp.AssemblyInfo.cs
+C:\Users\Korisnik\source\repos\Crypto\CryptoApp\CryptoApp\obj\Debug\net9.0\CryptoApp.csproj.CoreCompileInputs.cache
+C:\Users\Korisnik\source\repos\Crypto\CryptoApp\CryptoApp\obj\Debug\net9.0\CryptoApp.dll
+C:\Users\Korisnik\source\repos\Crypto\CryptoApp\CryptoApp\obj\Debug\net9.0\refint\CryptoApp.dll
+C:\Users\Korisnik\source\repos\Crypto\CryptoApp\CryptoApp\obj\Debug\net9.0\CryptoApp.pdb
+C:\Users\Korisnik\source\repos\Crypto\CryptoApp\CryptoApp\obj\Debug\net9.0\CryptoApp.genruntimeconfig.cache
+C:\Users\Korisnik\source\repos\Crypto\CryptoApp\CryptoApp\obj\Debug\net9.0\ref\CryptoApp.dll

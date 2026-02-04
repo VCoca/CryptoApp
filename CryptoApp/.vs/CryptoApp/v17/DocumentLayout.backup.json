@@ -1,0 +1,205 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|c:\\users\\korisnik\\source\\repos\\crypto\\cryptoapp\\cryptoapp\\core\\logging\\applogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|solutionrelative:cryptoapp\\core\\logging\\applogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|c:\\users\\korisnik\\source\\repos\\crypto\\cryptoapp\\cryptoapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|solutionrelative:cryptoapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|c:\\users\\korisnik\\source\\repos\\crypto\\cryptoapp\\cryptoapp\\watcher\\directorywatcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|solutionrelative:cryptoapp\\watcher\\directorywatcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|c:\\users\\korisnik\\source\\repos\\crypto\\cryptoapp\\cryptoapp\\core\\file\\fileencoder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|solutionrelative:cryptoapp\\core\\file\\fileencoder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|c:\\users\\korisnik\\source\\repos\\crypto\\cryptoapp\\cryptoapp\\core\\crypto\\sha1hasher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|solutionrelative:cryptoapp\\core\\crypto\\sha1hasher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|c:\\users\\korisnik\\source\\repos\\crypto\\cryptoapp\\cryptoapp\\core\\crypto\\playfaircipher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|solutionrelative:cryptoapp\\core\\crypto\\playfaircipher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|c:\\users\\korisnik\\source\\repos\\crypto\\cryptoapp\\cryptoapp\\core\\crypto\\pcbcmode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|solutionrelative:cryptoapp\\core\\crypto\\pcbcmode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|c:\\users\\korisnik\\source\\repos\\crypto\\cryptoapp\\cryptoapp\\core\\crypto\\rc6cipher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|solutionrelative:cryptoapp\\core\\crypto\\rc6cipher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|c:\\users\\korisnik\\source\\repos\\crypto\\cryptoapp\\cryptoapp\\core\\crypto\\iencryptor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|solutionrelative:cryptoapp\\core\\crypto\\iencryptor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|c:\\users\\korisnik\\source\\repos\\crypto\\cryptoapp\\cryptoapp\\core\\file\\ciphertype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|solutionrelative:cryptoapp\\core\\file\\ciphertype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|c:\\users\\korisnik\\source\\repos\\crypto\\cryptoapp\\cryptoapp\\core\\file\\metadataheader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631C4DA8-82CE-436D-B8AF-2EE04827A2B5}|CryptoApp\\CryptoApp.csproj|solutionrelative:cryptoapp\\core\\file\\metadataheader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AppLogger.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\Logging\\AppLogger.cs",
+              "RelativeDocumentMoniker": "CryptoApp\\Core\\Logging\\AppLogger.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\Logging\\AppLogger.cs",
+              "RelativeToolTip": "CryptoApp\\Core\\Logging\\AppLogger.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-03T17:20:36.2Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Program.cs",
+              "RelativeDocumentMoniker": "CryptoApp\\Program.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Program.cs",
+              "RelativeToolTip": "CryptoApp\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-31T11:31:01.402Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "CipherType.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\File\\CipherType.cs",
+              "RelativeDocumentMoniker": "CryptoApp\\Core\\File\\CipherType.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\File\\CipherType.cs",
+              "RelativeToolTip": "CryptoApp\\Core\\File\\CipherType.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-02T16:42:53.433Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "SHA1Hasher.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\Crypto\\SHA1Hasher.cs",
+              "RelativeDocumentMoniker": "CryptoApp\\Core\\Crypto\\SHA1Hasher.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\Crypto\\SHA1Hasher.cs",
+              "RelativeToolTip": "CryptoApp\\Core\\Crypto\\SHA1Hasher.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-31T12:18:17.64Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "PCBCMode.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\Crypto\\PCBCMode.cs",
+              "RelativeDocumentMoniker": "CryptoApp\\Core\\Crypto\\PCBCMode.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\Crypto\\PCBCMode.cs",
+              "RelativeToolTip": "CryptoApp\\Core\\Crypto\\PCBCMode.cs",
+              "ViewState": "AgIAACkAAAAAAAAAAAAIwE0AAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-31T12:18:05.659Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "RC6Cipher.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\Crypto\\RC6Cipher.cs",
+              "RelativeDocumentMoniker": "CryptoApp\\Core\\Crypto\\RC6Cipher.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\Crypto\\RC6Cipher.cs",
+              "RelativeToolTip": "CryptoApp\\Core\\Crypto\\RC6Cipher.cs",
+              "ViewState": "AgIAAIMAAAAAAAAAAAAwwKMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-31T12:17:38.038Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "PlayfairCipher.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\Crypto\\PlayfairCipher.cs",
+              "RelativeDocumentMoniker": "CryptoApp\\Core\\Crypto\\PlayfairCipher.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\Crypto\\PlayfairCipher.cs",
+              "RelativeToolTip": "CryptoApp\\Core\\Crypto\\PlayfairCipher.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAI8AAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-31T12:17:22.378Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IEncryptor.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\Crypto\\IEncryptor.cs",
+              "RelativeDocumentMoniker": "CryptoApp\\Core\\Crypto\\IEncryptor.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\Crypto\\IEncryptor.cs",
+              "RelativeToolTip": "CryptoApp\\Core\\Crypto\\IEncryptor.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-31T12:16:58.514Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "FileEncoder.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\File\\FileEncoder.cs",
+              "RelativeDocumentMoniker": "CryptoApp\\Core\\File\\FileEncoder.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\File\\FileEncoder.cs",
+              "RelativeToolTip": "CryptoApp\\Core\\File\\FileEncoder.cs",
+              "ViewState": "AgIAAFkAAAAAAAAAAAAwwGgAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-31T12:16:27.038Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "DirectoryWatcher.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Watcher\\DirectoryWatcher.cs",
+              "RelativeDocumentMoniker": "CryptoApp\\Watcher\\DirectoryWatcher.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Watcher\\DirectoryWatcher.cs",
+              "RelativeToolTip": "CryptoApp\\Watcher\\DirectoryWatcher.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAAowCcAAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-31T12:00:54.423Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "MetadataHeader.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\File\\MetadataHeader.cs",
+              "RelativeDocumentMoniker": "CryptoApp\\Core\\File\\MetadataHeader.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\source\\repos\\Crypto\\CryptoApp\\CryptoApp\\Core\\File\\MetadataHeader.cs",
+              "RelativeToolTip": "CryptoApp\\Core\\File\\MetadataHeader.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-31T11:33:53.976Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
