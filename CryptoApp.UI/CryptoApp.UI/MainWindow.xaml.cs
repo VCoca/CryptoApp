@@ -76,13 +76,12 @@ namespace CryptoApp.UI
             watcher = new DirectoryWatcher(path =>
             {
                 var encoder = BuildEncoder(); // uvek uzima trenutni algoritam
-                encoder.EncodeFile(path);
+                Task.Run(() => encoder.EncodeFile(path));
             });
 
             watcher.Start(WatchFolderBox.Text);
             watcherRunning = true;
 
-            AppLogger.Success("Directory watcher started");
             UpdateUIState();
         }
 
