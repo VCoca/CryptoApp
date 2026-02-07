@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CryptoApp.Core.Crypto;
 using CryptoApp.Watcher;
+using CryptoApp.Core.Network;
 
 namespace CryptoApp.UI
 {
@@ -23,6 +24,7 @@ namespace CryptoApp.UI
     {
         private DirectoryWatcher watcher;
         private bool watcherRunning = false;
+        private FileTransferServer server;
 
         public MainWindow()
         {
@@ -161,6 +163,24 @@ namespace CryptoApp.UI
                 key,
                 cipherType,
                 useSHA);
+        }
+        private async void SendFile_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new OpenFileDialog();
+            if (dlg.ShowDialog() != true) return;
+
+            var encoder = BuildEncoder();
+            var client = new FileTransferClient(encoder);
+
+            await Task.Run(() =>
+                client.SendFileAsync(dlg.FileName, HostBox.Text, int.Parse(PortBox.Text))
+            );
+        }
+        private void StartReceiver_Click(object sender, RoutedEventArgs e)
+        {
+            var encoder = BuildEncoder();
+            server = new FileTransferServer(encoder);
+            server.Start(int.Parse(PortBox.Text));
         }
     }
 }
