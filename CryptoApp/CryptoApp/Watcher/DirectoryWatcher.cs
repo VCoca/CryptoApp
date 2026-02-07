@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CryptoApp.Watcher
 {
-    public class DirectoryWatcher
+    public class DirectoryWatcher : IDisposable
     {
         private readonly FileSystemWatcher watcher;
         private readonly Action<string> onFileCreated;
@@ -33,15 +33,20 @@ namespace CryptoApp.Watcher
             AppLogger.Info("Stopped watching directory.");
         }
 
-        private void OnCreated(object source, FileSystemEventArgs e)
+        private async void OnCreated(object source, FileSystemEventArgs e)
         {
-            if (!WaitForFile(e.FullPath)) return;
-
-            AppLogger.Info($"New file detected: {e.FullPath}");
-
-            onFileCreated.Invoke(e.FullPath);
+            try
+            {
+                if (!await WaitForFileAsync(e.FullPath)) return;
+                AppLogger.Info($"New file detected: {e.FullPath}");
+                onFileCreated.Invoke(e.FullPath);
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Error processing file {e.FullPath}: {ex.Message}");
+            }
         }
-        private bool WaitForFile(string path)
+        private async Task<bool> WaitForFileAsync(string path)
         {
             for (int i = 0; i < 10; i++)
             {
@@ -52,10 +57,15 @@ namespace CryptoApp.Watcher
                 }
                 catch
                 {
-                    Thread.Sleep(300);
+                    await Task.Delay(500);
                 }
             }
             return false;
+        }
+
+        public void Dispose()
+            {
+                Stop();
         }
     }
 }

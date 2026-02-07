@@ -76,14 +76,28 @@ namespace CryptoApp.UI
         private void StartWatcher_Click(object sender, RoutedEventArgs e)
         {
             var encoder = BuildEncoder();
+            var encryptor = BuildEncryptor();
+            var cipherType = BuildCipherType();
+            var key = GetKey();
+
             watcher = new DirectoryWatcher(path =>
             {
-                _ = Task.Run(() => EncodeWithUISettings(encoder, path));
+                _ = Task.Run(() =>
+                {
+                    try
+                    {
+                        encoder.EncodeFile(path, encryptor, cipherType, key);
+                        AppLogger.Success($"Encoded: {System.IO.Path.GetFileName(path)}");
+                    }
+                    catch (Exception ex)
+                    {
+                        AppLogger.Error($"Encode failed: {ex.Message}");
+                    }
+                });
             });
 
             watcher.Start(WatchFolderBox.Text);
             watcherRunning = true;
-
             UpdateUIState();
         }
 
@@ -104,8 +118,19 @@ namespace CryptoApp.UI
             if (dlg.ShowDialog() != true) return;
 
             var encoder = BuildEncoder();
-            _ = Task.Run(() => EncodeWithUISettings(encoder, dlg.FileName));
-            AppLogger.Success("File manually encoded");
+            var encryptor = BuildEncryptor();
+            var cipherType = BuildCipherType();
+            var key = GetKey();
+
+            try
+            {
+                _ = Task.Run(() => encoder.EncodeFile(dlg.FileName, encryptor, cipherType, key));
+                AppLogger.Success("File manually encoded");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Manual encode failed: {ex.Message}");
+            }
         }
 
         // ===================== Algorithm Logic =====================
@@ -136,15 +161,6 @@ namespace CryptoApp.UI
         private void StopReceiver_Click(object sender, RoutedEventArgs e)
         {
             server.Stop();
-        }
-
-        private void EncodeWithUISettings(FileEncoder encoder, string path)
-        {
-            var encryptor = BuildEncryptor();
-            var type = BuildCipherType();
-            var key = GetKey();
-
-            encoder.EncodeFile(path, encryptor, type, key);
         }
 
         private IEncryptor BuildEncryptor()
