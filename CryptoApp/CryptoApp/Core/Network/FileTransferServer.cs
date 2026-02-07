@@ -13,12 +13,14 @@ namespace CryptoApp.Core.Network
     public class FileTransferServer
     {
         private readonly FileEncoder encoder;
+        private readonly Func<byte[]> keyProvider;
         private TcpListener listener;
         private CancellationTokenSource cts;
 
-        public FileTransferServer(FileEncoder encoder)
+        public FileTransferServer(FileEncoder encoder, Func<byte[]> keyProvider)
         {
             this.encoder = encoder;
+            this.keyProvider = keyProvider;
         }
 
         public void Start(int port)
@@ -50,33 +52,56 @@ namespace CryptoApp.Core.Network
 
         private async Task HandleClient(TcpClient client)
         {
-            using var stream = client.GetStream();
+            try
+            {
+                using var stream = client.GetStream();
 
-            // 1️⃣ Read filename
-            byte[] buf4 = new byte[4];
-            await ReadExact(stream, buf4);
-            int nameLen = BitConverter.ToInt32(buf4);
+                // --- Read filename ---
+                byte[] buf4 = new byte[4];
+                await ReadExact(stream, buf4);
+                int nameLen = BitConverter.ToInt32(buf4);
 
-            byte[] nameBytes = new byte[nameLen];
-            await ReadExact(stream, nameBytes);
-            string fileName = Encoding.UTF8.GetString(nameBytes);
+                byte[] nameBytes = new byte[nameLen];
+                await ReadExact(stream, nameBytes);
+                string fileName = Encoding.UTF8.GetString(nameBytes);
 
-            // 2️⃣ Read file bytes
-            await ReadExact(stream, buf4);
-            int fileLen = BitConverter.ToInt32(buf4);
+                // --- Read file length ---
+                await ReadExact(stream, buf4);
+                int fileLen = BitConverter.ToInt32(buf4);
 
-            byte[] fileBytes = new byte[fileLen];
-            await ReadExact(stream, fileBytes);
+                string encodedPath = Path.Combine("received", fileName);
+                Directory.CreateDirectory("received");
 
-            string encodedPath = Path.Combine("received", fileName);
-            Directory.CreateDirectory("received");
-            await System.IO.File.WriteAllBytesAsync(encodedPath, fileBytes);
+                using (var fs = System.IO.File.Create(encodedPath))
+                {
+                    byte[] buffer = new byte[8192];
+                    int remaining = fileLen;
 
-            AppLogger.Info($"File received: {fileName}");
+                    while (remaining > 0)
+                    {
+                        int read = await stream.ReadAsync(buffer, 0, Math.Min(buffer.Length, remaining));
+                        if (read == 0) throw new IOException("Connection closed");
+                        await fs.WriteAsync(buffer, 0, read);
+                        remaining -= read;
+                    }
+                }
 
-            // 3️⃣ Auto decode
-            encoder.DecodeFile(encodedPath);
-            AppLogger.Success($"File decoded: {fileName}");
+                AppLogger.Info($"File received: {fileName}");
+
+                // --- Decode using header-selected cipher ---
+                byte[] key = keyProvider();
+                encoder.DecodeFile(encodedPath, key);
+
+                AppLogger.Success($"File decoded: {fileName}");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Receiver error: {ex.Message}");
+            }
+            finally
+            {
+                client.Close();
+            }
         }
 
         private static async Task ReadExact(NetworkStream stream, byte[] buffer)

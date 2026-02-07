@@ -1,4 +1,5 @@
-﻿using CryptoApp.Core.File;
+﻿using CryptoApp.Core.Crypto;
+using CryptoApp.Core.File;
 using CryptoApp.Core.Logging;
 using System;
 using System.Collections.Generic;
@@ -11,32 +12,18 @@ namespace CryptoApp.Core.Network
 {
     public class FileTransferClient
     {
-        private readonly FileEncoder encoder;
-
-        public FileTransferClient(FileEncoder encoder)
-        {
-            this.encoder = encoder;
-        }
-
         public async Task SendFileAsync(string filePath, string host, int port)
         {
-            AppLogger.Info($"Connecting to {host}:{port}");
-
             using var client = new TcpClient();
             await client.ConnectAsync(host, port);
-
             using var stream = client.GetStream();
 
-            // 1️⃣ Encode file
-            string encodedPath = encoder.EncodeFile(filePath);
-            byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(encodedPath);
-            string fileName = Path.GetFileName(encodedPath);
-
+            string fileName = Path.GetFileName(filePath);
             byte[] nameBytes = Encoding.UTF8.GetBytes(fileName);
             byte[] nameLen = BitConverter.GetBytes(nameBytes.Length);
+            byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
             byte[] fileLen = BitConverter.GetBytes(fileBytes.Length);
 
-            // 2️⃣ Send header + file
             await stream.WriteAsync(nameLen);
             await stream.WriteAsync(nameBytes);
             await stream.WriteAsync(fileLen);

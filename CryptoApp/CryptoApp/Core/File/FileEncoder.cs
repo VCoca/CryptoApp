@@ -12,23 +12,17 @@ namespace CryptoApp.Core.File
 {
     public class FileEncoder
     {
-        private readonly IEncryptor encryptor;
         private readonly string outputDirectoryEncoded;
         private readonly string outputDirectoryDecoded;
-        private readonly byte[] key;
-        private readonly CipherType cipherType;
         private readonly bool useSHA;
 
-        public FileEncoder(IEncryptor encryptor, string outputDirectoryEncoded, string outputDirectoryDecoded, byte[] key, CipherType cipherType, bool useSHA)
+        public FileEncoder(string outputDirectoryEncoded, string outputDirectoryDecoded, bool useSHA)
         {
-            this.encryptor = encryptor;
             this.outputDirectoryEncoded = outputDirectoryEncoded;
             this.outputDirectoryDecoded = outputDirectoryDecoded;
-            this.key = key;
-            this.cipherType = cipherType;
             this.useSHA = useSHA;
         }
-        public string EncodeFile(string inputPath)
+        public string EncodeFile(string inputPath, IEncryptor encryptor, CipherType cipherType, byte[] key)
         {
             AppLogger.Info($"Encoding file: {inputPath} using {cipherType} cipher.");
             Directory.CreateDirectory(outputDirectoryEncoded);
@@ -77,9 +71,9 @@ namespace CryptoApp.Core.File
             return outputPath;
         }
 
-        public string DecodeFile(string inputPath)
+        public string DecodeFile(string inputPath, byte[] key)
         {
-            AppLogger.Info($"Decoding file: {inputPath} using {cipherType} cipher.");
+            AppLogger.Info($"Decoding file: {inputPath}");
             Directory.CreateDirectory(outputDirectoryDecoded);
             using var input = new FileStream(inputPath, FileMode.Open, FileAccess.Read);
 
@@ -92,6 +86,14 @@ namespace CryptoApp.Core.File
 
             string headerJson = Encoding.UTF8.GetString(headerBytes);
             var header = MetadataHeader.FromJson(headerJson);
+
+            CipherType cipherType = Enum.Parse<CipherType>(header.encryption);
+            IEncryptor encryptor = cipherType switch
+            {
+                CipherType.Playfair => new PlayfairCipher(),
+                CipherType.RC6_PCBC => new PCBCMode(),
+                _ => new RC6Cipher()
+            };
 
             byte[] iv = Array.Empty<byte>();
             if (cipherType == CipherType.RC6_PCBC)

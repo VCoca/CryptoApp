@@ -75,10 +75,10 @@ namespace CryptoApp.UI
 
         private void StartWatcher_Click(object sender, RoutedEventArgs e)
         {
+            var encoder = BuildEncoder();
             watcher = new DirectoryWatcher(path =>
             {
-                var encoder = BuildEncoder(); // uvek uzima trenutni algoritam
-                Task.Run(() => encoder.EncodeFile(path));
+                _ = Task.Run(() => EncodeWithUISettings(encoder, path));
             });
 
             watcher.Start(WatchFolderBox.Text);
@@ -104,7 +104,7 @@ namespace CryptoApp.UI
             if (dlg.ShowDialog() != true) return;
 
             var encoder = BuildEncoder();
-            encoder.EncodeFile(dlg.FileName);
+            _ = Task.Run(() => EncodeWithUISettings(encoder, dlg.FileName));
             AppLogger.Success("File manually encoded");
         }
 
@@ -117,70 +117,71 @@ namespace CryptoApp.UI
 
         // ===================== Encoder Factory =====================
 
-        private FileEncoder BuildEncoder()
-        {
-            string algo = null;
-            string mode = null;
-            string keyText = null;
-            bool useSHA = false;
-            string outputBase = null;
-
-            Dispatcher.Invoke(() =>
-            {
-                algo = AlgorithmBox.Text;
-                mode = ModeBox.Text;
-                keyText = KeyBox.Password;
-                useSHA = UseSHABox.IsChecked == true;
-                outputBase = string.IsNullOrWhiteSpace(OutputFolderBox.Text)
-                    ? WatchFolderBox.Text
-                    : OutputFolderBox.Text;
-            });
-
-            var key = Encoding.UTF8.GetBytes(keyText);
-
-            IEncryptor cipher;
-            CipherType cipherType;
-
-            if (algo == "Playfair")
-            {
-                cipher = new PlayfairCipher();
-                cipherType = CipherType.Playfair;
-            }
-            else if (mode == "PCBC")
-            {
-                cipher = new PCBCMode();
-                cipherType = CipherType.RC6_PCBC;
-            }
-            else
-            {
-                cipher = new RC6Cipher();
-                cipherType = CipherType.RC6;
-            }
-
-            return new FileEncoder(cipher,
-                System.IO.Path.Combine(outputBase, "encoded"),
-                System.IO.Path.Combine(outputBase, "decoded"),
-                key,
-                cipherType,
-                useSHA);
-        }
         private async void SendFile_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new OpenFileDialog();
             if (dlg.ShowDialog() != true) return;
 
-            var encoder = BuildEncoder();
-            var client = new FileTransferClient(encoder);
+            var client = new FileTransferClient();
 
-            await Task.Run(() =>
-                client.SendFileAsync(dlg.FileName, HostBox.Text, int.Parse(PortBox.Text))
-            );
+            await client.SendFileAsync(dlg.FileName, HostBox.Text, int.Parse(PortBox.Text));
         }
         private void StartReceiver_Click(object sender, RoutedEventArgs e)
         {
             var encoder = BuildEncoder();
-            server = new FileTransferServer(encoder);
+            server = new FileTransferServer(encoder, GetKey);
             server.Start(int.Parse(PortBox.Text));
+        }
+
+        private void StopReceiver_Click(object sender, RoutedEventArgs e)
+        {
+            server.Stop();
+        }
+
+        private void EncodeWithUISettings(FileEncoder encoder, string path)
+        {
+            var encryptor = BuildEncryptor();
+            var type = BuildCipherType();
+            var key = GetKey();
+
+            encoder.EncodeFile(path, encryptor, type, key);
+        }
+
+        private IEncryptor BuildEncryptor()
+        {
+            if (AlgorithmBox.Text == "Playfair")
+                return new PlayfairCipher();
+            if (ModeBox.Text == "PCBC")
+                return new PCBCMode();
+            return new RC6Cipher();
+        }
+
+        private CipherType BuildCipherType()
+        {
+            if (AlgorithmBox.Text == "Playfair")
+                return CipherType.Playfair;
+            if (ModeBox.Text == "PCBC")
+                return CipherType.RC6_PCBC;
+            return CipherType.RC6;
+        }
+
+        private byte[] GetKey()
+        {
+            return Encoding.UTF8.GetBytes(KeyBox.Password);
+        }
+
+        private FileEncoder BuildEncoder()
+        {
+            bool useSHA = UseSHABox.IsChecked == true;
+            string baseDir = string.IsNullOrWhiteSpace(OutputFolderBox.Text)
+                ? WatchFolderBox.Text
+                : OutputFolderBox.Text;
+
+            return new FileEncoder(
+                System.IO.Path.Combine(baseDir, "encoded"),
+                System.IO.Path.Combine(baseDir, "decoded"),
+                useSHA
+            );
         }
     }
 }

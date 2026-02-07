@@ -83,6 +83,7 @@
                 <Button Content="Send" Margin="10,0" Click="SendFile_Click"/>
 
                 <Button Content="Start recieving" Margin="10,0" Click="StartReceiver_Click"/>
+                <Button Content="Stop recieving" Margin="10,0" Click="StopReceiver_Click"/>
             </StackPanel>
         </GroupBox>
 
