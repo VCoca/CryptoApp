@@ -25,6 +25,7 @@ namespace CryptoApp.UI
         private DirectoryWatcher watcher;
         private bool watcherRunning = false;
         private FileTransferServer server;
+        private bool receiverRunning = false;
 
         public MainWindow()
         {
@@ -44,10 +45,14 @@ namespace CryptoApp.UI
             StopWatcherBtn.IsEnabled = watcherRunning;
             ManualEncodeBtn.IsEnabled = !watcherRunning;
 
-            if (AlgorithmBox.Text == "Playfair")
-                ModeBox.IsEnabled = true;
-            else
-                ModeBox.IsEnabled = false;
+            ModeBox.IsEnabled = AlgorithmBox.Text == "Playfair";
+
+            bool validPort = int.TryParse(PortBox.Text, out int p) && p > 0 && p <= 65535;
+            bool validHost = !string.IsNullOrWhiteSpace(HostBox.Text);
+
+            SendBtn.IsEnabled = validHost && validPort;
+            StartReceiverBtn.IsEnabled = validPort && !receiverRunning;
+            StopReceiverBtn.IsEnabled = receiverRunning;
         }
 
         // ===================== Folder Browsing =====================
@@ -140,6 +145,11 @@ namespace CryptoApp.UI
             UpdateUIState();
         }
 
+        private void NetworkFields_Changed(object sender, TextChangedEventArgs e)
+        {
+            UpdateUIState();
+        }
+
         // ===================== Encoder Factory =====================
 
         private async void SendFile_Click(object sender, RoutedEventArgs e)
@@ -156,11 +166,15 @@ namespace CryptoApp.UI
             var encoder = BuildEncoder();
             server = new FileTransferServer(encoder, GetKey);
             server.Start(int.Parse(PortBox.Text));
+            receiverRunning = true;
+            UpdateUIState();
         }
 
         private void StopReceiver_Click(object sender, RoutedEventArgs e)
         {
             server.Stop();
+            receiverRunning = false;
+            UpdateUIState();
         }
 
         private IEncryptor BuildEncryptor()
