@@ -127,15 +127,18 @@ namespace CryptoApp.UI
             var cipherType = BuildCipherType();
             var key = GetKey();
 
-            try
+            Task.Run(() =>
             {
-                _ = Task.Run(() => encoder.EncodeFile(dlg.FileName, encryptor, cipherType, key));
-                AppLogger.Success("File manually encoded");
-            }
-            catch (Exception ex)
-            {
-                AppLogger.Error($"Manual encode failed: {ex.Message}");
-            }
+                try
+                {
+                    encoder.EncodeFile(dlg.FileName, encryptor, cipherType, key);
+                    AppLogger.Success("File manually encoded");
+                }
+                catch (Exception ex)
+                {
+                    AppLogger.Error($"Manual encode failed: {ex.Message}");
+                }
+            });
         }
 
         // ===================== Algorithm Logic =====================

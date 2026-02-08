@@ -35,16 +35,19 @@ namespace CryptoApp.Watcher
 
         private async void OnCreated(object source, FileSystemEventArgs e)
         {
-            try
+            await Task.Run(async () =>
             {
-                if (!await WaitForFileAsync(e.FullPath)) return;
-                AppLogger.Info($"New file detected: {e.FullPath}");
-                onFileCreated.Invoke(e.FullPath);
-            }
-            catch (Exception ex)
-            {
-                AppLogger.Error($"Error processing file {e.FullPath}: {ex.Message}");
-            }
+                try
+                {
+                    if (!await WaitForFileAsync(e.FullPath)) return;
+                    AppLogger.Info($"New file detected: {e.FullPath}");
+                    onFileCreated.Invoke(e.FullPath);
+                }
+                catch (Exception ex)
+                {
+                    AppLogger.Error($"Error processing file {e.FullPath}: {ex.Message}");
+                }
+            });
         }
         private async Task<bool> WaitForFileAsync(string path)
         {

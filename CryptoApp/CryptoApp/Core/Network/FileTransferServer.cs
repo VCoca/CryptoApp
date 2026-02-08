@@ -66,8 +66,9 @@ namespace CryptoApp.Core.Network
                 string fileName = Encoding.UTF8.GetString(nameBytes);
 
                 // --- Read file length ---
-                await ReadExact(stream, buf4);
-                int fileLen = BitConverter.ToInt32(buf4);
+                byte[] buf8 = new byte[8];
+                await ReadExact(stream, buf8);
+                long fileLen = BitConverter.ToInt64(buf8);
 
                 string encodedPath = Path.Combine("received", fileName);
                 Directory.CreateDirectory("received");
@@ -75,11 +76,11 @@ namespace CryptoApp.Core.Network
                 using (var fs = System.IO.File.Create(encodedPath))
                 {
                     byte[] buffer = new byte[8192];
-                    int remaining = fileLen;
+                    long remaining = fileLen;
 
                     while (remaining > 0)
                     {
-                        int read = await stream.ReadAsync(buffer, 0, Math.Min(buffer.Length, remaining));
+                        int read = await stream.ReadAsync(buffer, 0, (int)Math.Min(buffer.Length, remaining));
                         if (read == 0) throw new IOException("Connection closed");
                         await fs.WriteAsync(buffer, 0, read);
                         remaining -= read;
