@@ -33,7 +33,6 @@ namespace CryptoApp.UI
             AppLogger.OnLog += msg => Dispatcher.Invoke(() => LogList.Items.Insert(0, msg));
             UpdateUIState();
             RC6Cipher test = new RC6Cipher();
-            test.TestRC6Vectors();
         }
 
         // ===================== UI State Logic =====================
@@ -123,7 +122,6 @@ namespace CryptoApp.UI
         {
             var dlg = new OpenFileDialog();
             if (dlg.ShowDialog() != true) return;
-
             var encoder = BuildEncoder();
             var encryptor = BuildEncryptor();
             var cipherType = BuildCipherType();
@@ -202,7 +200,9 @@ namespace CryptoApp.UI
 
         private byte[] GetKey()
         {
-            return Encoding.UTF8.GetBytes(KeyBox.Password);
+            string rawPassword = KeyBox.Password;
+            string fixedPassword = rawPassword.PadRight(16).Substring(0, 16);
+            return Encoding.UTF8.GetBytes(fixedPassword);
         }
 
         private FileEncoder BuildEncoder()
