@@ -79,9 +79,11 @@ namespace CryptoApp.Core.File
                     if (last)
                     {
                         int pad = encryptor.BlockSize - (chunk.Length % encryptor.BlockSize);
+                        if (pad == 0) pad = encryptor.BlockSize;
                         byte[] padded = new byte[chunk.Length + pad];
                         Array.Copy(chunk, padded, chunk.Length);
-                        padded[padded.Length - 1] = (byte)pad;
+                        for (int k = chunk.Length; k < padded.Length; k++)
+                            padded[k] = (byte)pad;
                         chunk = padded;
                     }
                     else if (chunk.Length % encryptor.BlockSize != 0)

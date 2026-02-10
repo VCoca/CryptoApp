@@ -32,6 +32,8 @@ namespace CryptoApp.UI
             InitializeComponent();
             AppLogger.OnLog += msg => Dispatcher.Invoke(() => LogList.Items.Insert(0, msg));
             UpdateUIState();
+            RC6Cipher test = new RC6Cipher();
+            test.TestRC6Vectors();
         }
 
         // ===================== UI State Logic =====================
