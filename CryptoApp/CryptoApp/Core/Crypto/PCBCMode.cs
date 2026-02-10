@@ -8,84 +8,74 @@ namespace CryptoApp.Core.Crypto
 {
     public class PCBCMode : IEncryptor
     {
-        private readonly IEncryptor baseCipher;
+        private readonly IEncryptor baseCipher = new RC6Cipher();
         public int BlockSize => baseCipher.BlockSize;
 
-        public PCBCMode()
+        private byte[] prevCipher;
+        private byte[] prevPlain;
+        private bool initialized = false;
+
+        private void Init(byte[] iv)
         {
-            this.baseCipher = new RC6Cipher();
+            if (initialized) return;
+            prevCipher = new byte[BlockSize];
+            prevPlain = new byte[BlockSize];
+            Array.Copy(iv, prevCipher, BlockSize);
+            initialized = true;
         }
 
         public byte[] Encrypt(byte[] data, byte[] key, byte[] iv)
         {
-            int blockSize = BlockSize;
-            int paddingLen = blockSize - (data.Length % blockSize);
-            byte[] padded = new byte[data.Length + paddingLen];
-            Array.Copy(data, padded, data.Length);
-            padded[padded.Length - 1] = (byte)paddingLen;
+            Init(iv);
 
-            byte[] result = new byte[padded.Length];
+            // ⚠️ NEMA paddinga ovde — FileEncoder će to rešiti na kraju
+            if (data.Length % BlockSize != 0)
+                throw new ArgumentException("Data length must be multiple of block size except final block.");
 
-            byte[] prevCipher = new byte[blockSize];
-            byte[] prevPlain = new byte[blockSize];
-            Array.Copy(iv, prevCipher, blockSize);
+            byte[] result = new byte[data.Length];
 
-            for (int i = 0; i < padded.Length; i += blockSize)
+            for (int i = 0; i < data.Length; i += BlockSize)
             {
-                byte[] block = new byte[blockSize];
-                Array.Copy(padded, i, block, 0, blockSize);
+                byte[] block = new byte[BlockSize];
+                Array.Copy(data, i, block, 0, BlockSize);
 
-                byte[] xored = new byte[blockSize];
-                for (int j = 0; j < blockSize; j++)
+                byte[] xored = new byte[BlockSize];
+                for (int j = 0; j < BlockSize; j++)
                     xored[j] = (byte)(block[j] ^ prevCipher[j] ^ prevPlain[j]);
 
-                byte[] encBlock = baseCipher.Encrypt(xored, key, iv);
-                Array.Copy(encBlock, 0, result, i, blockSize);
+                byte[] enc = baseCipher.Encrypt(xored, key, iv);
+                Array.Copy(enc, 0, result, i, BlockSize);
 
-                // Update prevPlain i prevCipher
-                Array.Copy(block, prevPlain, blockSize);
-                Array.Copy(encBlock, prevCipher, blockSize);
+                Array.Copy(block, prevPlain, BlockSize);
+                Array.Copy(enc, prevCipher, BlockSize);
             }
-
             return result;
         }
 
         public byte[] Decrypt(byte[] data, byte[] key, byte[] iv)
         {
-            int blockSize = BlockSize;
+            Init(iv);
+
+            if (data.Length % BlockSize != 0)
+                throw new ArgumentException("Ciphertext length must be multiple of block size.");
+
             byte[] result = new byte[data.Length];
 
-            byte[] prevCipher = new byte[blockSize];
-            byte[] prevPlain = new byte[blockSize];
-            Array.Copy(iv, prevCipher, blockSize);
-
-            for (int i = 0; i < data.Length; i += blockSize)
+            for (int i = 0; i < data.Length; i += BlockSize)
             {
-                byte[] block = new byte[blockSize];
-                Array.Copy(data, i, block, 0, blockSize);
+                byte[] block = new byte[BlockSize];
+                Array.Copy(data, i, block, 0, BlockSize);
 
-                byte[] decBlock = baseCipher.Decrypt(block, key, iv);
+                byte[] dec = baseCipher.Decrypt(block, key, iv);
 
-                for (int j = 0; j < blockSize; j++)
-                    decBlock[j] = (byte)(decBlock[j] ^ prevCipher[j] ^ prevPlain[j]);
+                for (int j = 0; j < BlockSize; j++)
+                    dec[j] ^= (byte)(prevCipher[j] ^ prevPlain[j]);
 
-                Array.Copy(decBlock, 0, result, i, blockSize);
+                Array.Copy(dec, 0, result, i, BlockSize);
 
-                // Update prevPlain i prevCipher
-                Array.Copy(decBlock, prevPlain, blockSize);
-                Array.Copy(block, prevCipher, blockSize);
+                Array.Copy(dec, prevPlain, BlockSize);
+                Array.Copy(block, prevCipher, BlockSize);
             }
-
-            return RemovePadding(result);
-
-        }
-        private byte[] RemovePadding(byte[] data)
-        {
-            int pad = data[data.Length - 1];
-            if (pad <= 0 || pad > BlockSize) return data;
-
-            byte[] result = new byte[data.Length - pad];
-            Array.Copy(data, result, result.Length);
             return result;
         }
     }

@@ -50,7 +50,7 @@ namespace CryptoApp.Core.File
                 AppLogger.Info($"Generated IV (Base64): {ivString}");
             }
 
-            using (var inputStreanm = new FileStream(inputPath, FileMode.Open, FileAccess.Read))
+            using (var inputStream = new FileStream(inputPath, FileMode.Open, FileAccess.Read))
             using (var outputStream = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
             {
                 var header = new MetadataHeader(
@@ -68,18 +68,29 @@ namespace CryptoApp.Core.File
 
                 byte[] buffer = new byte[BufferSize];
                 int bytesRead;
-                while ((bytesRead = inputStreanm.Read(buffer, 0, buffer.Length)) > 0)
+                bool last;
+
+                while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) > 0)
                 {
-                    byte[] dataToEncrypt = buffer;
-                    if (bytesRead < buffer.Length)
+                    last = inputStream.Position == inputStream.Length;
+                    byte[] chunk = new byte[bytesRead];
+                    Array.Copy(buffer, chunk, bytesRead);
+
+                    if (last)
                     {
-                        Array.Resize(ref dataToEncrypt, bytesRead);
+                        int pad = encryptor.BlockSize - (chunk.Length % encryptor.BlockSize);
+                        byte[] padded = new byte[chunk.Length + pad];
+                        Array.Copy(chunk, padded, chunk.Length);
+                        padded[padded.Length - 1] = (byte)pad;
+                        chunk = padded;
+                    }
+                    else if (chunk.Length % encryptor.BlockSize != 0)
+                    {
+                        throw new Exception("Non-final chunk must be multiple of block size.");
                     }
 
-                    // Napomena: Za blokovske šifre (RC6), poslednji blok mora imati padding.
-                    // Tvoj trenutni IEncryptor.Encrypt to radi interno.
-                    byte[] encryptedChunk = encryptor.Encrypt(dataToEncrypt, key, iv);
-                    outputStream.Write(encryptedChunk);
+                    byte[] encrypted = encryptor.Encrypt(chunk, key, iv);
+                    outputStream.Write(encrypted);
                 }
             }      
 
@@ -114,21 +125,23 @@ namespace CryptoApp.Core.File
 
             using (var output = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
             {
-                byte[] buffer = new byte[BufferSize]; // Mora biti usklađeno sa BlockSize enkriptora
+                byte[] buffer = new byte[BufferSize];
                 int bytesRead;
                 while ((bytesRead = input.Read(buffer, 0, buffer.Length)) > 0)
                 {
-                    byte[] dataToDecrypt = buffer;
-                    if (bytesRead < buffer.Length) Array.Resize(ref dataToDecrypt, bytesRead);
+                    byte[] chunk = new byte[bytesRead];
+                    Array.Copy(buffer, chunk, bytesRead);
 
-                    byte[] decryptedChunk = encryptor.Decrypt(dataToDecrypt, key, iv);
+                    byte[] decrypted = encryptor.Decrypt(chunk, key, iv);
 
-                    // Pišemo samo onoliko koliko je originalno bilo (uklanjanje paddinga na kraju fajla)
-                    long remaining = header.size - output.Position;
-                    int bytesToWrite = (int)Math.Min(decryptedChunk.Length, remaining);
+                    bool last = input.Position == input.Length;
+                    if (last)
+                    {
+                        int pad = decrypted[decrypted.Length - 1];
+                        Array.Resize(ref decrypted, decrypted.Length - pad);
+                    }
 
-                    if (bytesToWrite > 0)
-                        output.Write(decryptedChunk, 0, bytesToWrite);
+                    output.Write(decrypted);
                 }
             }
             if (cipherType != CipherType.Playfair && useSHA && !string.IsNullOrEmpty(header.hash))
