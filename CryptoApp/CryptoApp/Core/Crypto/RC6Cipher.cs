@@ -19,38 +19,70 @@ namespace CryptoApp.Core.Crypto
 
         public byte[] Encrypt(byte[] data, byte[] key, byte[] iv)
         {
-            int padLength = BlockSize - (data.Length % BlockSize);
-            byte[] padded = new byte[data.Length + padLength];
-            Array.Copy(data, padded, data.Length);
+            if (S == null) KeyExpansion(key);
 
-            byte[] result = new byte[padded.Length];
+            uint A = BitConverter.ToUInt32(data, 0);
+            uint B = BitConverter.ToUInt32(data, 4);
+            uint C = BitConverter.ToUInt32(data, 8);
+            uint D = BitConverter.ToUInt32(data, 12);
 
-            for (int i = 0; i < padded.Length; i += BlockSize)
+            B += S[0];
+            D += S[1];
+
+            for (int i = 1; i <= r; i++)
             {
-                byte[] block = new byte[BlockSize];
-                Array.Copy(padded, i, block, 0, BlockSize);
+                uint t = RotateLeft(B * (2 * B + 1), 5);
+                uint u = RotateLeft(D * (2 * D + 1), 5);
+                A = RotateLeft(A ^ t, (int)u) + S[2 * i];
+                C = RotateLeft(C ^ u, (int)t) + S[2 * i + 1];
 
-                byte[] encBlock = EncryptBlock(block, key);
-                Array.Copy(encBlock, 0, result, i, BlockSize);
+                uint temp = A; A = B; B = C; C = D; D = temp;
             }
 
-            return result;
+            A += S[2 * r + 2];
+            C += S[2 * r + 3];
+
+            byte[] cipher = new byte[16];
+            Array.Copy(BitConverter.GetBytes(A), 0, cipher, 0, 4);
+            Array.Copy(BitConverter.GetBytes(B), 0, cipher, 4, 4);
+            Array.Copy(BitConverter.GetBytes(C), 0, cipher, 8, 4);
+            Array.Copy(BitConverter.GetBytes(D), 0, cipher, 12, 4);
+
+            return cipher;
         }
 
         public byte[] Decrypt(byte[] data, byte[] key, byte[] iv)
         {
-            byte[] result = new byte[data.Length];
+            if (S == null) KeyExpansion(key);
 
-            for (int i = 0; i < data.Length; i += BlockSize)
+            uint A = BitConverter.ToUInt32(data, 0);
+            uint B = BitConverter.ToUInt32(data, 4);
+            uint C = BitConverter.ToUInt32(data, 8);
+            uint D = BitConverter.ToUInt32(data, 12);
+
+            C -= S[2 * r + 3];
+            A -= S[2 * r + 2];
+
+            for (int i = r; i >= 1; i--)
             {
-                byte[] block = new byte[BlockSize];
-                Array.Copy(data, i, block, 0, BlockSize);
+                uint temp = D; D = C; C = B; B = A; A = temp;
 
-                byte[] decBlock = DecryptBlock(block, key);
-                Array.Copy(decBlock, 0, result, i, BlockSize);
+                uint t = RotateLeft(B * (2 * B + 1), 5);
+                uint u = RotateLeft(D * (2 * D + 1), 5);
+                C = RotateRight(C - S[2 * i + 1], (int)t) ^ u;
+                A = RotateRight(A - S[2 * i], (int)u) ^ t;
             }
 
-            return result;
+            D -= S[1];
+            B -= S[0];
+
+            byte[] plain = new byte[16];
+            Array.Copy(BitConverter.GetBytes(A), 0, plain, 0, 4);
+            Array.Copy(BitConverter.GetBytes(B), 0, plain, 4, 4);
+            Array.Copy(BitConverter.GetBytes(C), 0, plain, 8, 4);
+            Array.Copy(BitConverter.GetBytes(D), 0, plain, 12, 4);
+
+            return plain;
         }
 
         private void KeyExpansion(byte[] key)
@@ -78,74 +110,6 @@ namespace CryptoApp.Core.Crypto
                 iIndex = (iIndex + 1) % t;
                 jIndex = (jIndex + 1) % c;
             }
-        }
-
-        private byte[] EncryptBlock(byte[] plaintext, byte[] key)
-        {
-            if (S == null) KeyExpansion(key);
-
-            uint A = BitConverter.ToUInt32(plaintext, 0);
-            uint B = BitConverter.ToUInt32(plaintext, 4);
-            uint C = BitConverter.ToUInt32(plaintext, 8);
-            uint D = BitConverter.ToUInt32(plaintext, 12);
-
-            B += S[0];
-            D += S[1];
-
-            for (int i = 1; i <= r; i++)
-            {
-                uint t = RotateLeft(B * (2 * B + 1), 5);
-                uint u = RotateLeft(D * (2 * D + 1), 5);
-                A = RotateLeft(A ^ t, (int)u) + S[2 * i];
-                C = RotateLeft(C ^ u, (int)t) + S[2 * i + 1];
-
-                uint temp = A; A = B; B = C; C = D; D = temp;
-            }
-
-            A += S[2 * r + 2];
-            C += S[2 * r + 3];
-
-            byte[] cipher = new byte[16];
-            Array.Copy(BitConverter.GetBytes(A), 0, cipher, 0, 4);
-            Array.Copy(BitConverter.GetBytes(B), 0, cipher, 4, 4);
-            Array.Copy(BitConverter.GetBytes(C), 0, cipher, 8, 4);
-            Array.Copy(BitConverter.GetBytes(D), 0, cipher, 12, 4);
-
-            return cipher;
-        }
-
-        private byte[] DecryptBlock(byte[] ciphertext, byte[] key)
-        {
-            if (S == null) KeyExpansion(key);
-
-            uint A = BitConverter.ToUInt32(ciphertext, 0);
-            uint B = BitConverter.ToUInt32(ciphertext, 4);
-            uint C = BitConverter.ToUInt32(ciphertext, 8);
-            uint D = BitConverter.ToUInt32(ciphertext, 12);
-
-            C -= S[2 * r + 3];
-            A -= S[2 * r + 2];
-
-            for (int i = r; i >= 1; i--)
-            {
-                uint temp = D; D = C; C = B; B = A; A = temp;
-
-                uint t = RotateLeft(B * (2 * B + 1), 5);
-                uint u = RotateLeft(D * (2 * D + 1), 5);
-                C = RotateRight(C - S[2 * i + 1], (int)t) ^ u;
-                A = RotateRight(A - S[2 * i], (int)u) ^ t;
-            }
-
-            D -= S[1];
-            B -= S[0];
-
-            byte[] plain = new byte[16];
-            Array.Copy(BitConverter.GetBytes(A), 0, plain, 0, 4);
-            Array.Copy(BitConverter.GetBytes(B), 0, plain, 4, 4);
-            Array.Copy(BitConverter.GetBytes(C), 0, plain, 8, 4);
-            Array.Copy(BitConverter.GetBytes(D), 0, plain, 12, 4);
-
-            return plain;
         }
 
         private static uint RotateLeft(uint x, int y)

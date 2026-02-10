@@ -19,9 +19,10 @@ namespace CryptoApp.Core.Crypto
         public byte[] Encrypt(byte[] data, byte[] key, byte[] iv)
         {
             int blockSize = BlockSize;
-            int paddedLength = ((data.Length + blockSize - 1) / blockSize) * blockSize;
-            byte[] padded = new byte[paddedLength];
+            int paddingLen = blockSize - (data.Length % blockSize);
+            byte[] padded = new byte[data.Length + paddingLen];
             Array.Copy(data, padded, data.Length);
+            padded[padded.Length - 1] = (byte)paddingLen;
 
             byte[] result = new byte[padded.Length];
 
@@ -75,8 +76,17 @@ namespace CryptoApp.Core.Crypto
                 Array.Copy(block, prevCipher, blockSize);
             }
 
-            return result;
+            return RemovePadding(result);
 
+        }
+        private byte[] RemovePadding(byte[] data)
+        {
+            int pad = data[data.Length - 1];
+            if (pad <= 0 || pad > BlockSize) return data;
+
+            byte[] result = new byte[data.Length - pad];
+            Array.Copy(data, result, result.Length);
+            return result;
         }
     }
 }
