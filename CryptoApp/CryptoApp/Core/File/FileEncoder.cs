@@ -155,7 +155,7 @@ namespace CryptoApp.Core.File
                 AppLogger.Info("Vrši se provera integriteta fajla (SHA-1)...");
                 string computedHash;
                 using (var sha1 = SHA1.Create())
-                using (var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read))
+                using (var fs = new FileStream(outputPath, FileMode.Open, FileAccess.Read))
                     computedHash = Convert.ToBase64String(sha1.ComputeHash(fs));
 
                 if (computedHash == header.hash)
