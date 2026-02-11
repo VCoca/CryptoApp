@@ -32,7 +32,7 @@ namespace CryptoApp.Core.File
             string outputPath = Path.Combine(outputDirectoryEncoded, fileInfo.Name + ".enc");
 
             string sha1Hash = "";
-            if (cipherType != CipherType.Playfair && useSHA)
+            if (useSHA)
             {
                 using var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read);
                 using var sha1 = SHA1.Create();
@@ -146,7 +146,7 @@ namespace CryptoApp.Core.File
                     output.Write(decrypted);
                 }
             }
-            if (cipherType != CipherType.Playfair && useSHA && !string.IsNullOrEmpty(header.hash))
+            if (useSHA && !string.IsNullOrEmpty(header.hash))
             {
                 AppLogger.Info("Vrši se provera integriteta fajla (SHA-1)...");
 
