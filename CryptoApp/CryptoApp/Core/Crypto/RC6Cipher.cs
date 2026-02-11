@@ -11,8 +11,8 @@ namespace CryptoApp.Core.Crypto
     {
         private readonly int w = 32;       // bit po reči
         private readonly int r = 20;       // broj rundi
-        private readonly int Pw = unchecked((int)0xB7E15163);
-        private readonly int Qw = unchecked((int)0x9E3779B9);
+        private readonly uint Pw = 0xB7E15163;
+        private readonly uint Qw = 0x9E3779B9;
 
         private uint[] S;                    // expanded key
         public int BlockSize => 16;         // 128-bit block
@@ -22,10 +22,82 @@ namespace CryptoApp.Core.Crypto
         {
             if (S == null) KeyExpansion(key);
 
-            uint A = BitConverter.ToUInt32(data, 0);
-            uint B = BitConverter.ToUInt32(data, 4);
-            uint C = BitConverter.ToUInt32(data, 8);
-            uint D = BitConverter.ToUInt32(data, 12);
+            // Rezultat mora biti iste dužine kao ulazni podaci
+            byte[] result = new byte[data.Length];
+
+            // Prolazimo kroz podatke u koracima od 16 bajtova (BlockSize)
+            for (int i = 0; i < data.Length; i += 16)
+            {
+                byte[] block = new byte[16];
+                // Uzimamo trenutni blok
+                Array.Copy(data, i, block, 0, 16);
+
+                // Kriptujemo samo taj blok
+                byte[] encryptedBlock = ProcessBlockEncrypt(block);
+
+                // Vraćamo ga u rezultat
+                Array.Copy(encryptedBlock, 0, result, i, 16);
+            }
+
+            return result;
+        }
+
+        public byte[] Decrypt(byte[] data, byte[] key, byte[] iv)
+        {
+            if (S == null) KeyExpansion(key);
+
+            byte[] result = new byte[data.Length];
+
+            for (int i = 0; i < data.Length; i += 16)
+            {
+                byte[] block = new byte[16];
+                Array.Copy(data, i, block, 0, 16);
+
+                byte[] decryptedBlock = ProcessBlockDecrypt(block);
+
+                Array.Copy(decryptedBlock, 0, result, i, 16);
+            }
+
+            return result;
+        }
+
+        private void KeyExpansion(byte[] key)
+        {
+            int c = key.Length / 4;
+            if (key.Length % 4 != 0) c++;
+
+            // Sigurnosna provera ako je kljuc prazan (iako ne bi trebalo)
+            if (c == 0) c = 1;
+
+            uint[] L = new uint[c];
+            for (int i = 0; i < key.Length; i++)
+                L[i / 4] = (L[i / 4] & ~(0xFFu << (8 * (i % 4)))) | ((uint)key[i] << (8 * (i % 4)));
+
+            int t = 2 * r + 4;
+            S = new uint[t];
+            S[0] = Pw;
+            for (int i = 1; i < t; i++)
+                S[i] = S[i - 1] + Qw;
+
+            uint A = 0, B = 0;
+            int iIndex = 0, jIndex = 0;
+            int n = 3 * Math.Max(t, c);
+
+            for (int k = 0; k < n; k++)
+            {
+                A = S[iIndex] = RotateLeft(S[iIndex] + A + B, 3);
+                B = L[jIndex] = RotateLeft(L[jIndex] + A + B, (int)(A + B));
+                iIndex = (iIndex + 1) % t;
+                jIndex = (jIndex + 1) % c;
+            }
+        }
+
+        private byte[] ProcessBlockEncrypt(byte[] block)
+        {
+            uint A = BitConverter.ToUInt32(block, 0);
+            uint B = BitConverter.ToUInt32(block, 4);
+            uint C = BitConverter.ToUInt32(block, 8);
+            uint D = BitConverter.ToUInt32(block, 12);
 
             B += S[0];
             D += S[1];
@@ -52,14 +124,12 @@ namespace CryptoApp.Core.Crypto
             return cipher;
         }
 
-        public byte[] Decrypt(byte[] data, byte[] key, byte[] iv)
+        private byte[] ProcessBlockDecrypt(byte[] block)
         {
-            if (S == null) KeyExpansion(key);
-
-            uint A = BitConverter.ToUInt32(data, 0);
-            uint B = BitConverter.ToUInt32(data, 4);
-            uint C = BitConverter.ToUInt32(data, 8);
-            uint D = BitConverter.ToUInt32(data, 12);
+            uint A = BitConverter.ToUInt32(block, 0);
+            uint B = BitConverter.ToUInt32(block, 4);
+            uint C = BitConverter.ToUInt32(block, 8);
+            uint D = BitConverter.ToUInt32(block, 12);
 
             C -= S[2 * r + 3];
             A -= S[2 * r + 2];
@@ -84,33 +154,6 @@ namespace CryptoApp.Core.Crypto
             Array.Copy(BitConverter.GetBytes(D), 0, plain, 12, 4);
 
             return plain;
-        }
-
-        private void KeyExpansion(byte[] key)
-        {
-            int c = key.Length / 4;
-            if (key.Length % 4 != 0) c++;
-
-            uint[] L = new uint[c];
-            for (int i = 0; i < key.Length; i++)
-                L[i / 4] |= (uint)key[i] << (8 * (i % 4));
-
-            int t = 2 * r + 4;
-            S = new uint[t];
-            S[0] = (uint)Pw;
-            for (int i = 1; i < t; i++)
-                S[i] = S[i - 1] + (uint)Qw;
-
-            uint A = 0, B = 0;
-            int iIndex = 0, jIndex = 0;
-            int n = 3 * Math.Max(t, c);
-            for (int k = 0; k < n; k++)
-            {
-                A = S[iIndex] = RotateLeft(S[iIndex] + A + B, 3);
-                B = L[jIndex] = RotateLeft(L[jIndex] + A + B, (int)(A + B));
-                iIndex = (iIndex + 1) % t;
-                jIndex = (jIndex + 1) % c;
-            }
         }
 
         private static uint RotateLeft(uint x, int y)
