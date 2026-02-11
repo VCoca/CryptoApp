@@ -34,8 +34,9 @@ namespace CryptoApp.Core.File
             string sha1Hash = "";
             if (useSHA)
             {
-                sha1Hash = SHA1Hasher.ComputeHash(inputPath);
-                AppLogger.Info($"Computed SHA-1 hash: {sha1Hash}");
+                using (var sha1 = SHA1.Create())
+                using (var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read))
+                    sha1Hash = Convert.ToBase64String(sha1.ComputeHash(fs));
             }
 
             byte[] iv = Array.Empty<byte>();
@@ -152,7 +153,10 @@ namespace CryptoApp.Core.File
             if (useSHA && !string.IsNullOrEmpty(header.hash))
             {
                 AppLogger.Info("Vrši se provera integriteta fajla (SHA-1)...");
-                string computedHash = SHA1Hasher.ComputeHash(outputPath);
+                string computedHash;
+                using (var sha1 = SHA1.Create())
+                using (var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read))
+                    computedHash = Convert.ToBase64String(sha1.ComputeHash(fs));
 
                 if (computedHash == header.hash)
                 {
