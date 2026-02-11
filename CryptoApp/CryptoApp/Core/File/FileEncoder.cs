@@ -34,9 +34,7 @@ namespace CryptoApp.Core.File
             string sha1Hash = "";
             if (useSHA)
             {
-                using var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read);
-                using var sha1 = SHA1.Create();
-                sha1Hash = Convert.ToBase64String(sha1.ComputeHash(fs));
+                sha1Hash = SHA1Hasher.ComputeHash(inputPath);
                 AppLogger.Info($"Computed SHA-1 hash: {sha1Hash}");
             }
 
@@ -76,25 +74,27 @@ namespace CryptoApp.Core.File
                     byte[] chunk = new byte[bytesRead];
                     Array.Copy(buffer, chunk, bytesRead);
 
-                    if (last)
+                    if (cipherType == CipherType.RC6 || cipherType == CipherType.RC6_PCBC)
                     {
-                        int pad = encryptor.BlockSize - (chunk.Length % encryptor.BlockSize);
-                        if (pad == 0) pad = encryptor.BlockSize;
-                        byte[] padded = new byte[chunk.Length + pad];
-                        Array.Copy(chunk, padded, chunk.Length);
-                        for (int k = chunk.Length; k < padded.Length; k++)
-                            padded[k] = (byte)pad;
-                        chunk = padded;
+                        if (last)
+                        {
+                            int pad = encryptor.BlockSize - (chunk.Length % encryptor.BlockSize);
+                            if (pad == 0) pad = encryptor.BlockSize;
+                            byte[] padded = new byte[chunk.Length + pad];
+                            Array.Copy(chunk, padded, chunk.Length);
+                            for (int k = chunk.Length; k < padded.Length; k++)
+                                padded[k] = (byte)pad;
+                            chunk = padded;
+                        }
+                        else if (chunk.Length % encryptor.BlockSize != 0)
+                        {
+                            throw new Exception("Non-final chunk must be multiple of block size.");
+                        }
                     }
-                    else if (chunk.Length % encryptor.BlockSize != 0)
-                    {
-                        throw new Exception("Non-final chunk must be multiple of block size.");
-                    }
-
                     byte[] encrypted = encryptor.Encrypt(chunk, key, iv);
                     outputStream.Write(encrypted);
                 }
-            }      
+            } 
 
             AppLogger.Success($"File encoded successfully: {outputPath}");
             return outputPath;
@@ -137,10 +137,13 @@ namespace CryptoApp.Core.File
                     byte[] decrypted = encryptor.Decrypt(chunk, key, iv);
 
                     bool last = input.Position == input.Length;
-                    if (last)
+                    if (last && (cipherType == CipherType.RC6 || cipherType == CipherType.RC6_PCBC))
                     {
                         int pad = decrypted[decrypted.Length - 1];
-                        Array.Resize(ref decrypted, decrypted.Length - pad);
+                        if (pad > 0 && pad <= 16)
+                        {
+                            Array.Resize(ref decrypted, decrypted.Length - pad);
+                        }
                     }
 
                     output.Write(decrypted);
@@ -149,10 +152,7 @@ namespace CryptoApp.Core.File
             if (useSHA && !string.IsNullOrEmpty(header.hash))
             {
                 AppLogger.Info("Vrši se provera integriteta fajla (SHA-1)...");
-
-                using var fs = new FileStream(outputPath, FileMode.Open, FileAccess.Read);
-                using var sha1 = SHA1.Create();
-                string computedHash = Convert.ToBase64String(sha1.ComputeHash(fs));
+                string computedHash = SHA1Hasher.ComputeHash(outputPath);
 
                 if (computedHash == header.hash)
                 {
